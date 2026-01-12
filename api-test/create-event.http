@@ -1,0 +1,9 @@
+
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "Name" : "New Year Party",
+    "Description" : "New Year Party At 6th Street",
+    "Location": "Sixth Street Austin"
+}
