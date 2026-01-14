@@ -1,0 +1,9 @@
+PUT http://localhost:3000/events
+Content-Type: application/json
+
+{   "ID" : 2,
+    "Name" : "New Year and Christmas Party",
+    "Description" : "New Year Party At 6th Street",
+    "Location": "Sixth Street Austin",
+    "userID" : 3
+}

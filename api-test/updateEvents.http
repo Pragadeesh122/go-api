@@ -1,0 +1,21 @@
+PUT http://localhost:3000/events/batch
+Content-Type: application/json
+
+[
+  {
+    "ID": 1,
+    "Name": "New Year Party",
+    "Description": "New Year Party At 6th Streett",
+    "Location": "Sixth Street Austin",
+    "Date": "2026-01-11T23:51:31.865691-06:00",
+    "UserID": 3
+  },
+  {
+    "ID": 2,
+    "Name": "New Year and Christmas Party",
+    "Description": "New Year Party At 6th Street",
+    "Location": "Sixth Street Austin",
+    "Date": "2026-01-14T03:15:44Z",
+    "UserID": 3
+  }
+]

@@ -1,12 +1,11 @@
 package events
 
 import (
+	"github.com/gin-gonic/gin"
 	"go_api/models"
 	"net/http"
 	"strconv"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 func getEvents(context *gin.Context) {
@@ -60,4 +59,41 @@ func getEvent(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, event)
+}
+
+func updateEvent(context *gin.Context) {
+	var event models.Event
+	err := context.ShouldBindBodyWithJSON(&event)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	update_err := event.UpdateEvent()
+
+	if update_err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "The event was successfully updated"})
+
+}
+
+func updateEvents(context *gin.Context) {
+	var events []models.Event
+	err := context.ShouldBindBodyWithJSON(&events)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	for _, event := range events {
+		err := event.UpdateEvent()
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+	}
+
+	context.JSON(http.StatusOK, gin.H{"messgae": "The events are successfully updated"})
+
 }

@@ -10,4 +10,8 @@ func RegisterEventRoutes(server *gin.Engine) {
 
 	server.POST("/events", createEvent)
 
+	server.PUT("/events", updateEvent)
+
+	server.PUT("/events/batch", updateEvents)
+
 }
