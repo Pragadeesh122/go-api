@@ -1,10 +1,9 @@
 package models
 
 import (
+	"errors"
 	"go_api/db"
 	"go_api/utils"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -37,27 +36,31 @@ func (user User) Save() error {
 	return nil
 }
 
-func (user User) Login() error {
-
-	var tempUser User
+func (user User) Login() (string, error) {
 
 	query := `
-	SELECT * FROM users WHERE email = ?
+	SELECT id,password FROM users WHERE email = ?
 	`
 
 	row := db.DB.QueryRow(query, user.Email)
 
-	err := row.Scan(&tempUser.ID, &tempUser.Email, &tempUser.Password)
+	var storedPassword string
+	err := row.Scan(&user.ID, &storedPassword)
 
 	if err != nil {
-		return err
+		return "", errors.New("Credentials Invalid")
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(tempUser.Password), []byte(user.Password))
+	err = utils.CheckPassword(user.Password, storedPassword)
+	if err != nil {
+		return "", errors.New("Credentials Invalid")
+	}
+
+	token, err := utils.GenerateToken(user.Email, user.ID)
 
 	if err != nil {
-		return err
+		return "", errors.New("Error creatiing a token")
 	}
 
-	return nil
+	return token, nil
 }

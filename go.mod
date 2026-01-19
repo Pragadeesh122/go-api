@@ -5,6 +5,11 @@ go 1.25.4
 require github.com/gin-gonic/gin v1.11.0
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
+)
+
+require (
 	github.com/bytedance/gopkg v0.1.3 // indirect
 	github.com/bytedance/sonic v1.14.2 // indirect
 	github.com/bytedance/sonic/loader v0.4.0 // indirect

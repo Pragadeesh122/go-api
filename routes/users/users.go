@@ -35,13 +35,13 @@ func login(context *gin.Context) {
 		return
 	}
 
-	err = user.Login()
+	token, err := user.Login()
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "User Logged In Successfully"})
+	context.JSON(http.StatusOK, gin.H{"message": "Login Successful", "generated token": token})
 
 }

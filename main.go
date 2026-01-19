@@ -7,9 +7,11 @@ import (
 	"go_api/routes/users"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	godotenv.Load()
 	db.InitDB()
 	fmt.Println("Go API Server")
 	server := gin.Default()
