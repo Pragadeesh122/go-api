@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"go_api/db"
 	"go_api/routes/events"
+	"go_api/routes/users"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -12,6 +14,7 @@ func main() {
 	fmt.Println("Go API Server")
 	server := gin.Default()
 
+	users.RegisterUserRoutes(server)
 	events.RegisterEventRoutes(server)
 
 	server.Run(":3000")

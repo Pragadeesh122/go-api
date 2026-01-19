@@ -1,0 +1,6 @@
+DELETE http://localhost:3000/events/batch
+Content-Type: application/json
+
+{
+    "ids" : [7,8,9]
+}

@@ -14,4 +14,8 @@ func RegisterEventRoutes(server *gin.Engine) {
 
 	server.PUT("/events/batch", updateEvents)
 
+	server.DELETE("/events/:eventID", deleteEvent)
+
+	server.DELETE("/events/batch", deleteEvents)
+
 }
