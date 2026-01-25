@@ -36,7 +36,7 @@ func (user User) Save() error {
 	return nil
 }
 
-func (user User) Login() (string, error) {
+func (user *User) Login() (string, error) {
 
 	query := `
 	SELECT id,password FROM users WHERE email = ?

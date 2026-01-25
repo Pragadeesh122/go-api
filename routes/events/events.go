@@ -1,11 +1,12 @@
 package events
 
 import (
-	"github.com/gin-gonic/gin"
 	"go_api/models"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func getEvents(context *gin.Context) {
@@ -30,7 +31,7 @@ func createEvent(context *gin.Context) {
 	}
 
 	event.Date = time.Now()
-	event.UserID = 3
+	event.UserID = context.GetInt64("userId")
 
 	err = event.Save()
 
@@ -70,6 +71,19 @@ func updateEvent(context *gin.Context) {
 		return
 	}
 
+	eventToUpdate, err := models.GetEvent(event.ID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	userId := context.GetInt64("userId")
+
+	if eventToUpdate.UserID != userId {
+		context.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized to update event"})
+		return
+	}
+
 	update_err := event.UpdateEvent()
 
 	if update_err != nil {
@@ -89,9 +103,39 @@ func updateEvents(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	userId := context.GetInt64("userId")
+
+	validCheck := true
+	for _, event := range events {
+		eventToUpdate, err := models.GetEvent(event.ID)
+
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		if eventToUpdate.UserID != userId {
+			validCheck = false
+		}
+	}
+
+	if !validCheck {
+		context.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized to update events"})
+		return
+	}
 
 	for _, event := range events {
-		err := event.UpdateEvent()
+		eventToUpdate, err := models.GetEvent(event.ID)
+
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		if eventToUpdate.UserID != userId {
+			context.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized to update events"})
+			return
+		}
+		err = event.UpdateEvent()
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -109,6 +153,18 @@ func deleteEvent(context *gin.Context) {
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "The eventID cannot be parsed! Make sure it is an integer"})
+		return
+	}
+	eventToUpdate, err := models.GetEvent(id)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	userId := context.GetInt64("userId")
+
+	if eventToUpdate.UserID != userId {
+		context.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized to delete event"})
 		return
 	}
 
@@ -135,9 +191,37 @@ func deleteEvents(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	userId := context.GetInt64("userId")
 
+	validCheck := true
 	for _, id := range req.IDs {
+		eventToUpdate, err := models.GetEvent(int64(id))
 
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		if eventToUpdate.UserID != userId {
+			validCheck = false
+		}
+	}
+
+	if !validCheck {
+		context.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized to delete events"})
+		return
+	}
+	for _, id := range req.IDs {
+		eventToUpdate, err := models.GetEvent(int64(id))
+
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		if eventToUpdate.UserID != userId {
+			context.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized to delete events"})
+			return
+		}
 		delete_err := models.DeleteEvent(int64(id))
 
 		if delete_err != nil {

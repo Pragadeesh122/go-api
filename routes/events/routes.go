@@ -1,21 +1,22 @@
 package events
 
-import "github.com/gin-gonic/gin"
+import (
+	"go_api/middleware"
+
+	"github.com/gin-gonic/gin"
+)
 
 func RegisterEventRoutes(server *gin.Engine) {
 
 	server.GET("/events", getEvents)
-
 	server.GET("/events/:eventID", getEvent)
 
-	server.POST("/events", createEvent)
-
-	server.PUT("/events", updateEvent)
-
-	server.PUT("/events/batch", updateEvents)
-
-	server.DELETE("/events/:eventID", deleteEvent)
-
-	server.DELETE("/events/batch", deleteEvents)
+	authenticated := server.Group("/")
+	authenticated.Use(middleware.Authenticate)
+	authenticated.POST("/events", createEvent)
+	authenticated.PUT("/events", updateEvent)
+	authenticated.PUT("/events/batch", updateEvents)
+	authenticated.DELETE("/events/:eventID", deleteEvent)
+	authenticated.DELETE("/events/batch", deleteEvents)
 
 }
